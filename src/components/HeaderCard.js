@@ -1,23 +1,18 @@
+// src/components/HeaderCard.js
 import React from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  Platform,
-} from "react-native";
+import { StyleSheet, View, Text, Platform } from "react-native";
 
-export default function HeaderCard({ r, actieveTab, setActieveTab }) {
-  // Haal de bedragen veilig op, ongeacht hoe de calculator ze precies teruggeeft
-  const koopBedrag = r?.koopTot || r?.koop?.totaal || 0;
-  const leaseBedrag = r?.leaseTot || r?.lease?.totaal || 0;
+export default function HeaderCard({ r }) {
+  // Haal de bedragen veilig op uit het resultaat
+  const koopBedrag = r?.koop?.totaal || 0;
+  const leaseBedrag = r?.lease?.totaal || 0;
 
   const koopIsGoedkoper = koopBedrag <= leaseBedrag;
   const verschil = Math.abs(Math.round(koopBedrag - leaseBedrag));
 
   return (
     <View style={styles.stickyResultCard}>
-      {/* Cijfers bovenin */}
+      {/* 1. DE ZUIVERE CIJFERS */}
       <View style={styles.stickyRow}>
         <View style={styles.stickyColumn}>
           <Text style={styles.stickyTitle}>🛒 MAANDLASTEN KOOP</Text>
@@ -25,7 +20,9 @@ export default function HeaderCard({ r, actieveTab, setActieveTab }) {
             €{Math.round(koopBedrag)}
           </Text>
         </View>
+
         <View style={styles.stickyDivider} />
+
         <View style={styles.stickyColumn}>
           <Text style={styles.stickyTitle}>📄 MAANDLASTEN LEASE</Text>
           <Text style={[styles.stickyAmount, { color: "#1d4ed8" }]}>
@@ -34,7 +31,7 @@ export default function HeaderCard({ r, actieveTab, setActieveTab }) {
         </View>
       </View>
 
-      {/* Gekleurde conclusie banner */}
+      {/* 2. DE CONCLUSIE BANNER */}
       <View
         style={[
           styles.conclusieBanner,
@@ -47,49 +44,10 @@ export default function HeaderCard({ r, actieveTab, setActieveTab }) {
             koopIsGoedkoper ? { color: "#92400e" } : { color: "#1e40af" },
           ]}
         >
-          💡{" "}
-          <Text style={{ fontWeight: "bold" }}>
-            {koopIsGoedkoper ? "Koop" : "Lease"}
-          </Text>{" "}
-          is{" "}
-          <Text style={{ fontWeight: "800" }}>€{verschil} p/m goedkoper</Text>.
+          {koopIsGoedkoper
+            ? `🎉 Koop is €${verschil} p/m goedkoper`
+            : `🎉 Lease is €${verschil} p/m goedkoper`}
         </Text>
-      </View>
-
-      {/* De twee tab-knoppen: Cockpit en Info */}
-      <View style={styles.navBar}>
-        <TouchableOpacity
-          style={[
-            styles.navButton,
-            actieveTab === "cockpit" && styles.navButtonActief,
-          ]}
-          onPress={() => setActieveTab("cockpit")}
-        >
-          <Text
-            style={[
-              styles.navButtonText,
-              actieveTab === "cockpit" && styles.navButtonTextActief,
-            ]}
-          >
-            🎮 Cockpit
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.navButton,
-            actieveTab === "info" && styles.navButtonActief,
-          ]}
-          onPress={() => setActieveTab("info")}
-        >
-          <Text
-            style={[
-              styles.navButtonText,
-              actieveTab === "info" && styles.navButtonTextActief,
-            ]}
-          >
-            📚 Info & Disclaimers
-          </Text>
-        </TouchableOpacity>
       </View>
     </View>
   );
@@ -98,13 +56,14 @@ export default function HeaderCard({ r, actieveTab, setActieveTab }) {
 const styles = StyleSheet.create({
   stickyResultCard: {
     position: "absolute",
-    top: Platform.OS === "ios" ? 44 : 0,
+    top: 0,
     left: 0,
     right: 0,
     backgroundColor: "#ffffff",
+    // HIERMEE HALEN WE HEM FLINK OMHOOG (Minder loze ruimte bovenin)
+    paddingTop: Platform.OS === "ios" ? 40 : 10,
+    paddingBottom: 10,
     paddingHorizontal: 16,
-    paddingTop: 14,
-    paddingBottom: 4,
     zIndex: 1000,
     borderBottomWidth: 1,
     borderBottomColor: "#e4e4e7",
@@ -139,8 +98,8 @@ const styles = StyleSheet.create({
     fontWeight: "800",
   },
   conclusieBanner: {
-    marginTop: 10,
-    paddingVertical: 8,
+    marginTop: 8,
+    paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 8,
     alignItems: "center",
@@ -149,33 +108,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fef3c7",
   },
   conclusieLease: {
-    backgroundColor: "#dbeafe",
+    backgroundColor: "#eff6ff",
   },
   conclusieText: {
-    fontSize: 13,
-  },
-  navBar: {
-    flexDirection: "row",
-    marginTop: 10,
-    borderTopWidth: 1,
-    borderTopColor: "#f4f4f5",
-    paddingTop: 6,
-  },
-  navButton: {
-    flex: 1,
-    paddingVertical: 8,
-    alignItems: "center",
-    borderRadius: 6,
-  },
-  navButtonActief: {
-    backgroundColor: "#f4f4f5",
-  },
-  navButtonText: {
-    fontSize: 13,
-    color: "#71717a",
-    fontWeight: "600",
-  },
-  navButtonTextActief: {
-    color: "#18181b",
+    fontSize: 12,
+    fontWeight: "700",
   },
 });
