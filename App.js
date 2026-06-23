@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 16,
-    paddingTop: 135, // Ruimte gereserveerd voor de compacte HeaderCard bovenin
+    paddingTop: 180, // Ruimte gereserveerd voor de compacte HeaderCard bovenin
     paddingBottom: 60, // Lekkere uitloop aan de onderkant
   },
   gecentreerdeSubHeader: {
