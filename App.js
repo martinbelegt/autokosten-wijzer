@@ -46,9 +46,13 @@ export default function App() {
   // --- LEASE CONFIGURATIE ---
   const [leaseBedrag, setLeaseBedrag] = useState(450);
   const [leaseLooptijd, setLeaseLooptijd] = useState(48); // in maanden
+  const [leaseKmBundel, setLeaseKmBundel] = useState(20000);
+  const [prijsExtraKm, setPrijsExtraKm] = useState(0.1);
 
   // --- STATE VOOR DE NIEUWE 5E INFORMATIE KAART ---
   const [infoUitgeklapt, setInfoUitgeklapt] = useState(false);
+  const [onderhoudsRisico, setOnderhoudsRisico] = useState("Gemiddeld");
+  const [restwaardeScenario, setRestwaardeScenario] = useState("Gemiddeld");
   const [basisUitgeklapt, setBasisUitgeklapt] = useState(true);
   const [specificatieUitgeklapt, setSpecificatieUitgeklapt] = useState(false);
   const [koopUitgeklapt, setKoopUitgeklapt] = useState(true);
@@ -97,7 +101,11 @@ export default function App() {
       : handmatigeOverigeKostenWaarde,
     leaseMaandbedrag: leaseBedrag,
     leaseLooptijd,
+    leaseKmBundel,
+    prijsExtraKm,
     leaseOnvoorzien: 25, // Vaste buffer of later uit te breiden
+    onderhoudsRisico,
+    restwaardeScenario,
     schadevrijeJaren,
     autoWassenEnPoetsen,
     handmatigeWegenbelasting:
@@ -186,6 +194,10 @@ export default function App() {
             setGewichtsklasse={setGewichtsklasse}
             handmatigeOverigeKosten={handmatigeOverigeKosten}
             setHandmatigeOverigeKosten={setHandmatigeOverigeKosten}
+            onderhoudsRisico={onderhoudsRisico}
+            setOnderhoudsRisico={setOnderhoudsRisico}
+            restwaardeScenario={restwaardeScenario}
+            setRestwaardeScenario={setRestwaardeScenario}
             schadevrijeJaren={schadevrijeJaren}
             setSchadevrijeJaren={setSchadevrijeJaren}
             autoWassenEnPoetsen={autoWassenEnPoetsen}
@@ -202,6 +214,10 @@ export default function App() {
             setLeaseBedrag={setLeaseBedrag}
             leaseLooptijd={leaseLooptijd}
             setLeaseLooptijd={setLeaseLooptijd}
+            leaseKmBundel={leaseKmBundel}
+            setLeaseKmBundel={setLeaseKmBundel}
+            prijsExtraKm={prijsExtraKm}
+            setPrijsExtraKm={setPrijsExtraKm}
             isUitgeklapt={leaseUitgeklapt}
             setIsUitgeklapt={setLeaseUitgeklapt}
           />

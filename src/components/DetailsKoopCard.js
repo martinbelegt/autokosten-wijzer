@@ -55,6 +55,10 @@ export default function DetailsKoopCard(props) {
     // Gekoppeld aan de juiste namen uit de calculator
     handmatigeOverigeKosten,
     setHandmatigeOverigeKosten,
+    onderhoudsRisico,
+    setOnderhoudsRisico,
+    restwaardeScenario,
+    setRestwaardeScenario,
     kaartUitgeklapt: kaartUitgeklaptExtern,
     setKaartUitgeklapt: setKaartUitgeklaptExtern,
   } = props;
@@ -74,10 +78,18 @@ export default function DetailsKoopCard(props) {
   };
 
   const jaren = beoogdeLooptijd || 4;
+  const restwaardeAfschrijving =
+    restwaardeScenario === "Voorzichtig"
+      ? 0.15
+      : restwaardeScenario === "Optimistisch"
+        ? 0.09
+        : 0.12;
   const geschatteRestwaarde = Math.max(
     0,
-    aanschafprijs - aanschafprijs * (0.12 * jaren),
+    aanschafprijs - aanschafprijs * (restwaardeAfschrijving * jaren),
   );
+  const onderhoudsRisicoFactor =
+    onderhoudsRisico === "Laag" ? 0.8 : onderhoudsRisico === "Hoog" ? 1.35 : 1;
   const getoondeRestwaardeText =
     verwachteRestwaarde > 0
       ? `Gebaseerd op jouw invoer: €${Math.round((aanschafprijs - verwachteRestwaarde) / (jaren * 12))} p/m afschrijving.`
@@ -87,6 +99,7 @@ export default function DetailsKoopCard(props) {
   let basisSchattingOnderhoud =
     autoLeeftijdKoop === 0 ? 25 : autoLeeftijdKoop < 6 ? 60 : 95;
   if (kmJaar > 25000) basisSchattingOnderhoud += 25;
+  basisSchattingOnderhoud *= onderhoudsRisicoFactor;
 
   const huidigeOverigeKosten =
     handmatigeOverigeKosten !== undefined &&
@@ -170,6 +183,33 @@ export default function DetailsKoopCard(props) {
             <Text style={styles.dynamischeHelperTekst}>
               {getoondeRestwaardeText}
             </Text>
+            <Text style={styles.basisLabel}>Restwaarde scenario:</Text>
+            <View style={styles.btnRow}>
+              {["Voorzichtig", "Gemiddeld", "Optimistisch"].map((scenario) => (
+                <TouchableOpacity
+                  key={scenario}
+                  style={[
+                    styles.optionButton,
+                    restwaardeScenario === scenario &&
+                      styles.activeVerzekeringBtn,
+                  ]}
+                  onPress={() => setRestwaardeScenario(scenario)}
+                >
+                  <Text
+                    style={
+                      restwaardeScenario === scenario
+                        ? styles.activeBtnText
+                        : styles.btnText
+                    }
+                  >
+                    {scenario}
+                  </Text>
+                </TouchableOpacity>
+              ))}
+            </View>
+            <Text style={styles.dynamischeHelperTekst}>
+              Scenario geldt alleen als restwaarde leeg is.
+            </Text>
 
             <View style={[styles.compactGridRow, { marginTop: 4 }]}>
               <View style={{ flex: 1, justifyContent: "center" }}>
@@ -205,6 +245,29 @@ export default function DetailsKoopCard(props) {
               <Text style={styles.onderhoudBedragTekst}>
                 €{Math.round(huidigeOverigeKosten)} p/m
               </Text>
+            </View>
+            <Text style={styles.basisLabel}>Onderhoudsrisico:</Text>
+            <View style={styles.btnRow}>
+              {["Laag", "Gemiddeld", "Hoog"].map((risico) => (
+                <TouchableOpacity
+                  key={risico}
+                  style={[
+                    styles.optionButton,
+                    onderhoudsRisico === risico && styles.activeVerzekeringBtn,
+                  ]}
+                  onPress={() => setOnderhoudsRisico(risico)}
+                >
+                  <Text
+                    style={
+                      onderhoudsRisico === risico
+                        ? styles.activeBtnText
+                        : styles.btnText
+                    }
+                  >
+                    {risico}
+                  </Text>
+                </TouchableOpacity>
+              ))}
             </View>
 
             <Slider

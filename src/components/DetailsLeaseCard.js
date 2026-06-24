@@ -7,6 +7,10 @@ export default function DetailsLeaseCard({
   setLeaseBedrag,
   leaseLooptijd,
   setLeaseLooptijd,
+  leaseKmBundel,
+  setLeaseKmBundel,
+  prijsExtraKm,
+  setPrijsExtraKm,
   isUitgeklapt: isUitgeklaptExtern,
   setIsUitgeklapt: setIsUitgeklaptExtern,
 }) {
@@ -15,6 +19,8 @@ export default function DetailsLeaseCard({
   const isUitgeklapt = isUitgeklaptExtern ?? interneIsUitgeklapt;
   const setIsUitgeklapt =
     setIsUitgeklaptExtern ?? setInterneIsUitgeklapt;
+  const veiligeLeaseKmBundel = leaseKmBundel || 20000;
+  const veiligePrijsExtraKm = prijsExtraKm ?? 0.1;
 
   // Zorg voor een veilige fallback als de prop vanuit App.js een lege callback is
   const handleLooptijdChange = (waarde) => {
@@ -79,6 +85,46 @@ export default function DetailsLeaseCard({
                 step={12}
                 value={leaseLooptijd}
                 onValueChange={handleLooptijdChange}
+                minimumTrackTintColor="#1d4ed8"
+                maximumTrackTintColor="#cbd5e1"
+                thumbTintColor="#1d4ed8"
+              />
+            </View>
+
+            <View style={[styles.sliderBlock, { marginTop: 10 }]}>
+              <Text style={styles.subLabel}>
+                Kilometerbundel per jaar:{" "}
+                <Text style={styles.sliderValueText}>
+                  {veiligeLeaseKmBundel.toLocaleString("nl-NL")} km
+                </Text>
+              </Text>
+              <Slider
+                style={styles.slider}
+                minimumValue={5000}
+                maximumValue={50000}
+                step={500}
+                value={veiligeLeaseKmBundel}
+                onValueChange={setLeaseKmBundel}
+                minimumTrackTintColor="#1d4ed8"
+                maximumTrackTintColor="#cbd5e1"
+                thumbTintColor="#1d4ed8"
+              />
+            </View>
+
+            <View style={[styles.sliderBlock, { marginTop: 10 }]}>
+              <Text style={styles.subLabel}>
+                Prijs per extra kilometer:{" "}
+                <Text style={styles.sliderValueText}>
+                  €{veiligePrijsExtraKm.toFixed(2)}
+                </Text>
+              </Text>
+              <Slider
+                style={styles.slider}
+                minimumValue={0}
+                maximumValue={0.35}
+                step={0.01}
+                value={veiligePrijsExtraKm}
+                onValueChange={setPrijsExtraKm}
                 minimumTrackTintColor="#1d4ed8"
                 maximumTrackTintColor="#cbd5e1"
                 thumbTintColor="#1d4ed8"

@@ -28,6 +28,8 @@ export const berekenAutokosten = (inputs) => {
     inkomstenbelastingDruk,
     leaseMaandbedrag,
     leaseOnvoorzien,
+    onderhoudsRisico,
+    restwaardeScenario,
 
     // MEER OPTIES INPUTS
     handmatigeWegenbelasting, // Overschrijft de automatische MRB berekening indien ingevuld
@@ -123,7 +125,12 @@ export const berekenAutokosten = (inputs) => {
 
   // Als de restwaarde leeg is, maakt de app een slimme, voorzichtige indicatie (bijv. 12% afschrijving per jaar)
   if (isNaN(restwaardeInzet) || restwaardeInzet === 0) {
-    const afschrijvingsPercentagePerJaar = 0.12;
+    const afschrijvingsPercentagePerJaar =
+      restwaardeScenario === "Voorzichtig"
+        ? 0.15
+        : restwaardeScenario === "Optimistisch"
+          ? 0.09
+          : 0.12;
     const totaleAfschrijvingSchatting =
       aanschaf * (afschrijvingsPercentagePerJaar * jaren);
     restwaardeInzet = Math.max(0, aanschaf - totaleAfschrijvingSchatting);
@@ -149,7 +156,13 @@ export const berekenAutokosten = (inputs) => {
     if (kmJaar > 25000) basisOnderhoud += 25;
     if (anwbStatus === "Goud" || anwbStatus === "Platina") basisOnderhoud -= 3;
     if (autoWassenEnPoetsen) basisOnderhoud += 15;
-    onderhoudPerMaand = basisOnderhoud;
+    const onderhoudsRisicoFactor =
+      onderhoudsRisico === "Laag"
+        ? 0.8
+        : onderhoudsRisico === "Hoog"
+          ? 1.35
+          : 1;
+    onderhoudPerMaand = basisOnderhoud * onderhoudsRisicoFactor;
   }
 
   // 5. VERZEKERING (INCLUSIEF SCHADEVRIJE JAREN BONUS & LEEFTIJDSRISICO)
@@ -209,9 +222,11 @@ export const berekenAutokosten = (inputs) => {
     maandelijkseRente;
 
   // 8. LEASE EXTRA KILOMETERS
+  const veiligeLeaseKmBundel = parseFloat(leaseKmBundel) || 20000;
+  const veiligePrijsExtraKm = parseFloat(prijsExtraKm) || 0;
   const extraKmKostenPerMaand =
-    kmJaar > leaseKmBundel && prijsExtraKm > 0
-      ? ((kmJaar - leaseKmBundel) * prijsExtraKm) / 12
+    kmJaar > veiligeLeaseKmBundel && veiligePrijsExtraKm > 0
+      ? ((kmJaar - veiligeLeaseKmBundel) * veiligePrijsExtraKm) / 12
       : 0;
 
   // 9. ZZP FISCALE BIJTELLING
