@@ -14,8 +14,13 @@ export default function BasisGegevensCard({
   getKnoppenStijl,
   brandstofPrijs,
   setBrandstofPrijs,
+  isUitgeklapt: isUitgeklaptExtern,
+  setIsUitgeklapt: setIsUitgeklaptExtern,
 }) {
-  const [isUitgeklapt, setIsUitgeklapt] = useState(true);
+  const [interneIsUitgeklapt, setInterneIsUitgeklapt] = useState(true);
+  const isUitgeklapt = isUitgeklaptExtern ?? interneIsUitgeklapt;
+  const setIsUitgeklapt =
+    setIsUitgeklaptExtern ?? setInterneIsUitgeklapt;
 
   return (
     <View style={styles.card}>
@@ -164,7 +169,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e4e4e7",
     borderLeftWidth: 4,
-    borderLeftColor: "#10b981", // Groen accent passend bij algemene basisgegevens
+    borderLeftColor: "#f59e0b", // Oranje accent passend bij algemene secties
   },
   headerToggle: {
     paddingVertical: 2,

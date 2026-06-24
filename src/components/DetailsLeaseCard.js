@@ -7,9 +7,14 @@ export default function DetailsLeaseCard({
   setLeaseBedrag,
   leaseLooptijd,
   setLeaseLooptijd,
+  isUitgeklapt: isUitgeklaptExtern,
+  setIsUitgeklapt: setIsUitgeklaptExtern,
 }) {
   // Standaard ingeklapt voor maximale rust
-  const [isUitgeklapt, setIsUitgeklapt] = useState(false);
+  const [interneIsUitgeklapt, setInterneIsUitgeklapt] = useState(false);
+  const isUitgeklapt = isUitgeklaptExtern ?? interneIsUitgeklapt;
+  const setIsUitgeklapt =
+    setIsUitgeklaptExtern ?? setInterneIsUitgeklapt;
 
   // Zorg voor een veilige fallback als de prop vanuit App.js een lege callback is
   const handleLooptijdChange = (waarde) => {

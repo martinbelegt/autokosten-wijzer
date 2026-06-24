@@ -55,10 +55,15 @@ export default function DetailsKoopCard(props) {
     // Gekoppeld aan de juiste namen uit de calculator
     handmatigeOverigeKosten,
     setHandmatigeOverigeKosten,
+    kaartUitgeklapt: kaartUitgeklaptExtern,
+    setKaartUitgeklapt: setKaartUitgeklaptExtern,
   } = props;
 
   // Staat standaard op true zodat je direct ziet dat hij werkt!
-  const [kaartUitgeklapt, setKaartUitgeklapt] = useState(true);
+  const [interneKaartUitgeklapt, setInterneKaartUitgeklapt] = useState(true);
+  const kaartUitgeklapt = kaartUitgeklaptExtern ?? interneKaartUitgeklapt;
+  const setKaartUitgeklapt =
+    setKaartUitgeklaptExtern ?? setInterneKaartUitgeklapt;
   const [meerOptiesOpen, setMeerOptiesOpen] = useState(false);
   const [infoModalZichtbaar, setInfoModalZichtbaar] = useState(false);
   const [modalType, setModalType] = useState("");
@@ -420,7 +425,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e4e4e7",
     borderLeftWidth: 4,
-    borderLeftColor: "#b45309",
+    borderLeftColor: "#15803d",
   },
   headerToggle: {
     paddingVertical: 2,

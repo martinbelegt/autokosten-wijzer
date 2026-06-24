@@ -2,9 +2,18 @@
 import React, { useState } from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 
-export default function LiveComparisonCard({ r, metLening, isZzpZakelijk }) {
+export default function LiveComparisonCard({
+  r,
+  metLening,
+  isZzpZakelijk,
+  isUitgeklapt: isUitgeklaptExtern,
+  setIsUitgeklapt: setIsUitgeklaptExtern,
+}) {
   // Standaard staat de uitgebreide breakdown ingeklapt (false)
-  const [isUitgeklapt, setIsUitgeklapt] = useState(false);
+  const [interneIsUitgeklapt, setInterneIsUitgeklapt] = useState(false);
+  const isUitgeklapt = isUitgeklaptExtern ?? interneIsUitgeklapt;
+  const setIsUitgeklapt =
+    setIsUitgeklaptExtern ?? setInterneIsUitgeklapt;
 
   // GECORRIGEERDE VEILIGHEIDSKLEP: We checken of de juiste sub-objecten bestaan
   if (!r || !r.koop || !r.lease) {

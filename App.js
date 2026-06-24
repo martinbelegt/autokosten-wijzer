@@ -49,15 +49,27 @@ export default function App() {
 
   // --- STATE VOOR DE NIEUWE 5E INFORMATIE KAART ---
   const [infoUitgeklapt, setInfoUitgeklapt] = useState(false);
+  const [basisUitgeklapt, setBasisUitgeklapt] = useState(true);
+  const [specificatieUitgeklapt, setSpecificatieUitgeklapt] = useState(false);
+  const [koopUitgeklapt, setKoopUitgeklapt] = useState(true);
+  const [leaseUitgeklapt, setLeaseUitgeklapt] = useState(false);
 
   // Synchroniseer brandstofprijs als het type brandstof wijzigt (optioneel, als fallback)
   useEffect(() => {
-    if (brandstof === "Benzine" && brandstofPrijs === 1.65)
-      setBrandstofPrijs(1.95);
-    if (brandstof === "Diesel" && brandstofPrijs === 1.95)
-      setBrandstofPrijs(1.65);
+    if (brandstof === "Benzine") setBrandstofPrijs(1.95);
+    if (brandstof === "Diesel") setBrandstofPrijs(1.65);
     if (brandstof === "Elektrisch") setBrandstofPrijs(0.35);
   }, [brandstof]);
+
+  const genormaliseerdeGewichtsklasse = ["licht", "midden", "zwaar"].includes(
+    gewichtsklasse,
+  )
+    ? gewichtsklasse
+    : "midden";
+  const handmatigeOverigeKostenWaarde =
+    handmatigeOverigeKosten !== ""
+      ? parseFloat(handmatigeOverigeKosten)
+      : null;
 
   // Verzamel alle parameters voor de calculator
   const inputs = {
@@ -66,16 +78,23 @@ export default function App() {
     beoogdeLooptijd,
     brandstof,
     brandstofPrijs,
+    verbruikBenzine: 15,
+    prijsBenzine: brandstofPrijs,
+    verbruikDiesel: 18,
+    prijsDiesel: brandstofPrijs,
+    verbruikStroom: 18,
+    prijsStroom: brandstofPrijs,
     aanschafprijs,
     verwachteRestwaarde,
     autoLeeftijdKoop,
     verzekeringType,
     provincie,
-    gewichtsklasse,
-    provincie,
+    gewichtsklasse: genormaliseerdeGewichtsklasse,
     schadevrijeJaren,
     autoWassenEnPoetsen,
-    handmatigeOverigeKosten: parseFloat(handmatigeOverigeKosten) || 0,
+    handmatigeOverigeKosten: Number.isNaN(handmatigeOverigeKostenWaarde)
+      ? null
+      : handmatigeOverigeKostenWaarde,
     leaseMaandbedrag: leaseBedrag,
     leaseLooptijd,
     leaseOnvoorzien: 25, // Vaste buffer of later uit te breiden
@@ -98,6 +117,13 @@ export default function App() {
     ];
   };
 
+  const openHeaderSectie = (sectie) => {
+    if (sectie === "basis") setBasisUitgeklapt(true);
+    if (sectie === "specificatie") setSpecificatieUitgeklapt(true);
+    if (sectie === "koop") setKoopUitgeklapt(true);
+    if (sectie === "lease") setLeaseUitgeklapt(true);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView
@@ -105,7 +131,7 @@ export default function App() {
         style={{ flex: 1 }}
       >
         {/* STICKY HEADER SUMMARY BOVENIN (Altijd in beeld bij scrollen) */}
-        <HeaderCard r={r} />
+        <HeaderCard r={r} onOpenSection={openHeaderSectie} />
 
         {/* HOOFD SCROLL CONTAINER MET ALLE TRANSPARANTE EN INKLAPBARE KAARTEN */}
         <ScrollView
@@ -130,10 +156,18 @@ export default function App() {
             getKnoppenStijl={getKnoppenStijl}
             brandstofPrijs={brandstofPrijs}
             setBrandstofPrijs={setBrandstofPrijs}
+            isUitgeklapt={basisUitgeklapt}
+            setIsUitgeklapt={setBasisUitgeklapt}
           />
 
           {/* KAART 2: LIVE SPECIFICATIE PER MAAND (De tabel-breakdown) */}
-          <LiveComparisonCard r={r} metLening={false} isZzpZakelijk={false} />
+          <LiveComparisonCard
+            r={r}
+            metLening={false}
+            isZzpZakelijk={false}
+            isUitgeklapt={specificatieUitgeklapt}
+            setIsUitgeklapt={setSpecificatieUitgeklapt}
+          />
 
           {/* KAART 3: DETAILS KOOPAUTO */}
           <DetailsKoopCard
@@ -158,6 +192,8 @@ export default function App() {
             setAutoWassenEnPoetsen={setAutoWassenEnPoetsen}
             handmatigeWegenbelasting={handmatigeWegenbelasting}
             setHandmatigeWegenbelasting={setHandmatigeWegenbelasting}
+            kaartUitgeklapt={koopUitgeklapt}
+            setKaartUitgeklapt={setKoopUitgeklapt}
           />
 
           {/* KAART 4: DETAILS LEASEAUTO */}
@@ -166,6 +202,8 @@ export default function App() {
             setLeaseBedrag={setLeaseBedrag}
             leaseLooptijd={leaseLooptijd}
             setLeaseLooptijd={setLeaseLooptijd}
+            isUitgeklapt={leaseUitgeklapt}
+            setIsUitgeklapt={setLeaseUitgeklapt}
           />
 
           {/* KAART 5: VOLLEDIGE INFORMATIE & UITLEG KAART (Nu met álle eerdere info hersteld!) */}
@@ -244,14 +282,14 @@ const styles = StyleSheet.create({
   },
   scrollContainer: {
     padding: 16,
-    paddingTop: 180, // Ruimte gereserveerd voor de compacte HeaderCard bovenin
+    paddingTop: 310, // Ruimte gereserveerd voor de dashboardheader bovenin
     paddingBottom: 60, // Lekkere uitloop aan de onderkant
   },
   gecentreerdeSubHeader: {
     fontSize: 13,
     color: "#71717a",
     textAlign: "center",
-    marginTop: 2,
+    marginTop: 8,
     marginBottom: 12,
     fontWeight: "500",
     fontStyle: "italic", // Maakt hem net even wat verfijnder als detail-regeltje
@@ -278,7 +316,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#e4e4e7",
     borderLeftWidth: 4,
-    borderLeftColor: "#71717a", // Neutraal grijs haakje voor documentatie
+    borderLeftColor: "#f59e0b", // Oranje accent passend bij algemene secties
   },
   infoToggle: {
     paddingVertical: 2,
