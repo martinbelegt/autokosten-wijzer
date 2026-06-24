@@ -26,6 +26,9 @@ export default function App() {
   const [kilometers, setKilometers] = useState(20000);
   const [brandstof, setBrandstof] = useState("Benzine");
   const [beoogdeLooptijd, setBeoogdeLooptijd] = useState(4);
+  const [schadevrijeJaren, setSchadevrijeJaren] = useState(5); // Standaard op 5
+  const [autoWassenEnPoetsen, setAutoWassenEnPoetsen] = useState(false); // Standaard uit
+  const [handmatigeWegenbelasting, setHandmatigeWegenbelasting] = useState(""); // Standaard leeg
 
   // --- BRANDSTOF INSTELLINGEN ---
   const [brandstofPrijs, setBrandstofPrijs] = useState(1.95);
@@ -37,6 +40,8 @@ export default function App() {
   const [verzekeringType, setVerzekeringType] = useState("WA+");
   const [provincie, setProvincie] = useState("Noord-Brabant");
   const [handmatigeOverigeKosten, setHandmatigeOverigeKosten] = useState("");
+  // Voeg deze regel toe bij je andere useState hooks in App.js:
+  const [gewichtsklasse, setGewichtsklasse] = useState("1051-1150 kg"); // Of je eigen standaard beginwaarde
 
   // --- LEASE CONFIGURATIE ---
   const [leaseBedrag, setLeaseBedrag] = useState(450);
@@ -66,10 +71,20 @@ export default function App() {
     autoLeeftijdKoop,
     verzekeringType,
     provincie,
+    gewichtsklasse,
+    provincie,
+    schadevrijeJaren,
+    autoWassenEnPoetsen,
     handmatigeOverigeKosten: parseFloat(handmatigeOverigeKosten) || 0,
     leaseMaandbedrag: leaseBedrag,
     leaseLooptijd,
     leaseOnvoorzien: 25, // Vaste buffer of later uit te breiden
+    schadevrijeJaren,
+    autoWassenEnPoetsen,
+    handmatigeWegenbelasting:
+      handmatigeWegenbelasting !== ""
+        ? parseFloat(handmatigeWegenbelasting)
+        : null,
   };
 
   // Voer de berekening live uit
@@ -133,8 +148,16 @@ export default function App() {
             beoogdeLooptijd={beoogdeLooptijd}
             provincie={provincie}
             setProvincie={setProvincie}
+            gewichtsklasse={gewichtsklasse}
+            setGewichtsklasse={setGewichtsklasse}
             handmatigeOverigeKosten={handmatigeOverigeKosten}
             setHandmatigeOverigeKosten={setHandmatigeOverigeKosten}
+            schadevrijeJaren={schadevrijeJaren}
+            setSchadevrijeJaren={setSchadevrijeJaren}
+            autoWassenEnPoetsen={autoWassenEnPoetsen}
+            setAutoWassenEnPoetsen={setAutoWassenEnPoetsen}
+            handmatigeWegenbelasting={handmatigeWegenbelasting}
+            setHandmatigeWegenbelasting={setHandmatigeWegenbelasting}
           />
 
           {/* KAART 4: DETAILS LEASEAUTO */}

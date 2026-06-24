@@ -347,7 +347,12 @@ export default function DetailsKoopCard(props) {
                     style={[styles.basisTextInput, { width: 80 }]}
                     keyboardType="numeric"
                     placeholder="Auto"
-                    value={String(handmatigeWegenbelasting)}
+                    // DIT IS DE NIEUWE VEILIGE REGEL:
+                    value={
+                      handmatigeWegenbelasting
+                        ? String(handmatigeWegenbelasting)
+                        : ""
+                    }
                     onChangeText={setHandmatigeWegenbelasting}
                   />
                 </View>
